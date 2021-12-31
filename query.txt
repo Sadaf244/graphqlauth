@@ -1,0 +1,37 @@
+mutation v{
+    loginUser(email:"sana@gmail.com",password:"sana1234"){
+     token
+      user{
+        id
+        email
+        password
+        isActive
+        username
+       isStaff
+      
+    }
+    }
+  }
+  
+  mutation b{
+    createUser(email:"sana@gmail.com",username:"Sana",name:"Sana",phoneNo:856565641,password:"sana123")
+    {
+     user{
+      name
+      password
+      
+    }
+    }
+  }
+  
+  mutation a{
+    updateUser(id:8,email:"sana@gmail.com",username:"Sana",name:"Sana",phoneNo:12345677,password:"sana1234")
+    {
+     user{
+      name
+      password
+      phoneNo
+      isStaff
+    }
+    }
+  }
