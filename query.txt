@@ -35,3 +35,10 @@ mutation v{
     }
     }
   }
+  query user{
+    users{
+      id
+      username
+      password
+    }
+  }
