@@ -39,17 +39,19 @@ class CreateUser(graphene.Mutation):
         
     def mutate(self, info, name, username,password,phone_no,email):
         if get_user_model().objects.filter(email=email).exists():
-            raise Exception("Already Registered")
-        else:
-            user = get_user_model()(
-                name=name,
-                username=username,
-                phone_no=phone_no,
-                email=email,  
-                
-            )
-            user.set_password(password)
-            user.save()
+            raise Exception("email already used")
+        users=get_user_model().objects.all()
+        for user in users:
+            if user.check_password(password):
+                raise Exception("password already used")
+        user = get_user_model()(
+            name=name,
+            username=username,
+            phone_no=phone_no,
+            email=email,  
+        )
+        user.set_password(password)
+        user.save()
         return CreateUser(user=user)    
 
 class UpdateUser(graphene.Mutation):
