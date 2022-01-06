@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 from graphene_django import DjangoObjectType
 from graphql_jwt.shortcuts import get_token
 from django.contrib.auth.hashers import check_password
+import datetime 
+from .models import SchoolUser
+from datetime import date,timedelta
 
 class UserType(DjangoObjectType):
     class Meta:
@@ -70,7 +73,6 @@ class UpdateUser(graphene.Mutation):
         user.name=name
         user.username=username
         user.phone_no=phone_no
-        # user.password=password
         user.email=email
         user.save()
         user.set_password(password)
@@ -85,6 +87,31 @@ class Mutation(graphene.ObjectType):
     update_user = UpdateUser.Field()
 class Query(graphene.ObjectType):
     users = graphene.List(UserType)
+    me_info=graphene.Field(S_user,user_id=graphene.Int())
+    def resolve_me_info(self,info,user_id):
+        user=SchoolUser.objects.get(id=user_id)
+        status=False
+        if user.subscription_id.time_validity_option=="M":
+            months=user.subscription_id.time_validity*30
+            udate=user.date_joined.date()
+            exp=date.today()
+            expdate=udate + timedelta(days = months)
+            if exp > expdate:
+                status=True
+        if user.subscription_id.time_validity_option=="Y":
+            no_mon=12*user.subscription_id.time_validity
+            months=no_mon*30
+            udate=user.date_joined.date()
+            exp=date.today()
+            expdate=udate + timedelta(days = months)
+            if exp > expdate:
+                status=True
+        final=S_user(
+           user_id=user.id,
+           user_name=user.username,
+           subscription_status=status 
+        )
+        return final
 
     def resolve_users(self, info):
         return get_user_model().objects.all()
