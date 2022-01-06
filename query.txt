@@ -42,3 +42,11 @@ mutation v{
       password
     }
   }
+query me{
+  meInfo(userId:1)
+  {
+    userId
+    userName
+    subscriptionStatus
+  }
+}
